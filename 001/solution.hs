@@ -9,10 +9,8 @@ import           Data.Ord        (Down (..))
 main :: IO ()
 main = do
   txt <- readFile "./input.txt"
-  let elves = lines txt
-                & splitOn [""]
-                & fmap (read <$>)
-                & fmap sum :: [Int]
+  let raw = splitOn [""] $ lines txt
+  let elves = sum . (read <$>) <$> raw
 
   let part1 = maximum elves
   let part2 = sortOn Down elves & take 3 & sum
