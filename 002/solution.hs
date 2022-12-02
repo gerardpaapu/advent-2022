@@ -8,7 +8,11 @@ import           Data.List.Split (splitOn)
 main :: IO ()
 main = do
     txt <- readFile "input.txt"
-    let result1 = sum $ scoreLine' . parseLine1 <$> lines txt
+    let result1
+          = sum
+          $ scoreLine'
+          . parseLine1
+          <$> lines txt
     let result2 = sum $ scoreLine' . fmap runStrategy . parseLine2 <$> lines txt
 
     print (result1, result2)
