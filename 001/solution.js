@@ -6,49 +6,35 @@ const main = async () => {
   )
 
   let elves = Id(data)
-    .map(lines)
-    .map(splitBy(eq('')))
-    .map(
-      mapWith(
-        mapWith((x) => Number(x)),
-        sum
-      )
-    ).value
+    .map(splitOn('\n'))
+    .map(splitOn(''))
+    .unwrap()
+    .map(mapWith(toNumber))
+    .map(sum)
 
   const step1 = maximum(elves)
-  const step2 = sum(elves.sort(desc).slice(0, 3))
+  const top3 = elves.sort(desc).slice(0, 3)
+  const step2 = sum(top3)
 
   console.log({ step1, step2 })
 }
 
-const Id = (value) => ({ map: (f) => Id(f(value)), value })
-
-const eq = (a) => (b) => a === b
+const Id = (value) => ({ map: (f) => Id(f(value)), unwrap: () => value })
 const sum = (a) => a.reduce((a, b) => a + b, 0)
 const maximum = (a) => Math.max(...a)
-const lines = (s) => s.split('\n')
 const desc = (a, b) => b - a
+const toNumber = (n) => Number(n)
 
 const mapWith =
   (...fs) =>
   (a) =>
     fs.reduce((a, f) => a.map(f), a)
 
-const findIndex =
-  (f, start = 0) =>
-  (arr) => {
-    for (let i = start; i < arr.length; i++) {
-      if (f(arr[i])) return i
-    }
-
-    return -1
-  }
-
-const splitBy = (f) => (arr) => {
+const splitOn = (c) => (arr) => {
   const result = []
   let start = 0
   let end
-  while ((end = findIndex(f, start)(arr)) !== -1) {
+  while ((end = arr.indexOf(c, start)) !== -1) {
     result.push(arr.slice(start, end))
     start = end + 1
   }
