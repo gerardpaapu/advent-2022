@@ -11,7 +11,7 @@ main :: IO ()
 main = do
   txt <- readFile "input.txt"
   let part1 = lines txt
-              & fmap (head . uncurry intersect . splitRucksack . fmap toPriority)
+              & fmap (toPriority . head . uncurry intersect . splitRucksack)
               & sum
   let part2 = lines txt
               & triplets
@@ -19,10 +19,12 @@ main = do
               & sum
   print (part1, part2)
 
+triplets :: [c] -> [(c, c, c)]
 triplets (a : b : c : xs) = (a, b, c) : triplets xs
 triplets []               = []
 triplets _                = []
 
+common :: Eq a => ([a], [a], [a]) -> [a]
 common (a, b, c) = a `intersect` b `intersect` c
 
 toPriority :: Char -> Int
