@@ -1,9 +1,6 @@
 #!/usr/bin/env stack
 -- stack --resolver lts-12.21 script
-{-# LANGUAGE LambdaCase #-}
 
--- stack --resolver lts-12.21 script
-{-# LANGUAGE LambdaCase #-}
 import           Data.Char       (digitToInt, isAsciiLower, isAsciiUpper, ord)
 import           Data.Function   ((&))
 import           Data.List       (intersect)
@@ -15,7 +12,6 @@ example = "2-4,6-8\n2-3,4-5\n5-7,7-9\n2-8,3-7\n6-6,4-6\n2-6,4-8"
 main :: IO ()
 main = do
   txt <- readFile "input.txt"
-  -- let txt = example
   let part1 = txt & lines & fmap parsePair & filter oneContainsTheOther & length
   let part2 = txt & lines & fmap parsePair & filter overlaps & length
   print (part1, part2)
@@ -30,11 +26,14 @@ parsePair c = case splitOn "," c of
   [a, b] -> (parseRange a, parseRange b)
   _      -> error "Invalid pair"
 
+contains :: (Ord a1, Ord a2) => (a1, a2) -> (a1, a2) -> Bool
 contains (a, b) (x, y) =
   a <= x && b >= y
 
+oneContainsTheOther :: (Ord a1, Ord a2) => ((a1, a2), (a1, a2)) -> Bool
 oneContainsTheOther (a, b) = contains a b || contains b a
 
+overlaps :: Ord a => ((a, a), (a, a)) -> Bool
 overlaps ((a, b), (x, y)) =
   -- :/ some of this feels redundant
   contains (a, b) x || contains (a, b) y || contains (x, y) a || contains (x, y ) b
